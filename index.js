@@ -1,53 +1,88 @@
-const Discord = require('discord.js');
-require('dotenv').config();
+import DiscordJS from 'discord.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
-var playroom1 = [0, 1, 2, 3]
-var playroom2 = [0, 1, 2, 3]
+import * as helper from "./helper/helper.js"
 
-const client = new Discord.Client({
+const original_arr = Array.from(Array(10).keys())
+
+const client = new DiscordJS.Client({
     intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        DiscordJS.Intents.FLAGS.GUILDS,
+        DiscordJS.Intents.FLAGS.GUILD_MESSAGES,
     ],
 })
 
 client.on('ready', () => {
     console.log("ready!!!")
+
+    const guideId = '884098897377636452'
+    const guild = client.guilds.cache.get(guideId)
+    let commands
+
+    if (guild) {
+        commands = guild.commands
+    } else {
+        commands = client.application?.commands
+    }
+
+    commands?.create({
+        name: 'add',
+        description: 'add two numbers',
+        options: [
+            {
+                name: 'num1',
+                description: 'first number',
+                required: true,
+                type: DiscordJS.Constants.ApplicationCommandOptionTypes.NUMBER
+            },
+            {
+                name: 'num2',
+                description: 'second number',
+                required: false,
+                type: DiscordJS.Constants.ApplicationCommandOptionTypes.NUMBER
+            },
+        ]
+    })
+
+    commands?.create({
+        name: 'game-start',
+        description: 'Bắt đầu lượt chơi mới'
+    })
 })
 
-function pop_card(playroom) {
-    playroom.pop()
-}
 
-client.on('messageCreate', (message) => {
-    if (message.content === 'bắt đầu chơi') {
-        playroom1 = [0, 1, 2, 3]
-        playroom2 = [0, 1, 2, 3]
-        message.reply({
-            content: playroom1.join() + "---" + playroom2.join()
-        })
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) {
+        return
     }
 
-    if (message.content === 'ping') {
-        message.reply({
-            content: playroom1.join()
-        })
+    var attack1 = original_arr
+    var defend1 = original_arr
+
+    const { commandName, options } = interaction
+
+    switch (commandName) {
+        case 'game-start':
+            attack1 = helper.random()
+            defend1 = helper.random()
+            var attack2 = helper.random()
+            var defend2 = helper.random()
+
+            interaction.reply({
+                content: `${attack1.join("|")}\n${defend1.join("|")}\n${attack2.join("|")}\n${defend2.join("|")}`,
+            })
+            break;
+        case 'add':
+            const num1 = options.getNumber('num1') || 0
+            const num2 = options.getNumber('num2') || 0
+
+            interaction.reply({
+                content: `+${num1 + num2} SSR :one:`,
+                // ephemeral: true,
+            })
+            break;
     }
-    if (message.content === 'rút bài') {
-        if (message.channel.id === '892081081182994432') {
-            pop_card(playroom1)
-        } else {
-            pop_card(playroom2)
-        }
-        message.reply({
-            content: playroom1.join() + "---" + playroom2.join()
-        })
-    }
-    if (message.content === 'channel') {
-        message.reply({
-            content: message.channel.id
-        })
-    }
+
 })
-
 client.login(process.env.TOKEN)
