@@ -1,6 +1,8 @@
+var deck_size = 10
+
 export function random() {
     let j, x, i;
-    let a = Array.from(Array(10).keys())
+    let a = Array.from(Array(deck_size).keys())
     for (i = a.length - 1; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
         x = a[i];
@@ -8,8 +10,6 @@ export function random() {
         a[j] = x;
     }
 
-
-    // console.log(a)
     return a;
 }
 
