@@ -351,16 +351,16 @@ try {
                     break;
                 }
 
-                await interaction.reply({
-                    content: 'Chờ chút...',
-                    // ephemeral: true,
-                });
-                await atk.splice(helper.getRandomInt(0, atk.length - 1), 0, number)
+                // await interaction.reply({
+                //     content: 'Chờ chút...',
+                //     // ephemeral: true,
+                // });
+                atk.splice(helper.getRandomInt(0, atk.length - 1), 0, number)
                 // await interaction.editReply({
                 //     content: `${atk.join()}`,
                 //     // ephemeral: true,
                 // })
-                await interaction.editReply({
+                interaction.reply({
                     content: `Player 1 đưa lá bài [${number}] vào bộ bài`,
                     // ephemeral: true,
                 })
@@ -385,16 +385,16 @@ try {
                     break;
                 }
 
-                await interaction.reply({
-                    content: 'Chờ chút...',
-                    // ephemeral: true,
-                });
-                await def.splice(helper.getRandomInt(0, def.length - 1), 0, number)
+                // await interaction.reply({
+                //     content: 'Chờ chút...',
+                //     // ephemeral: true,
+                // });
+                def.splice(helper.getRandomInt(0, def.length - 1), 0, number)
                 // await interaction.editReply({
                 //     content: `${def.join()}`,
                 //     // ephemeral: true,
                 // })
-                await interaction.editReply({
+                interaction.reply({
                     content: `Player 2 đưa lá bài [${number}] vào bộ bài`,
                     // ephemeral: true,
                 })
