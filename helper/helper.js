@@ -1,4 +1,4 @@
-export var deck_size = 10
+export var deck_size = 20
 
 export function random() {
     let j, x, i;

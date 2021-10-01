@@ -5,7 +5,7 @@ dotenv.config()
 import * as helper from "./helper/helper.js"
 
 var deck_size = helper.deck_size
-var channel1 = '892081081182994432'
+var channel1 = '887057961464238080'
 var channel2 = '892097703528505355'
 var channel3 = '891527609094135829'
 
@@ -213,20 +213,20 @@ try {
             case 'game-manual':
                 interaction.reply({
                     content: "Hướng dẫn sử dụng bot chia bài:\n" +
-                        "`\\game-manual`: xem hướng dẫn chơi\n" +
-                        "`\\game-start`: bắt đầu ván chơi mới\n" +
+                        "`/game-manual`: xem hướng dẫn chơi\n" +
+                        "`/game-start`: bắt đầu ván chơi mới\n" +
                         "---------------------------\n" +
-                        "`\\p1-draw`: Player 1 rút bài\n" +
-                        "`\\p2-draw`: Player 2 rút bài\n" +
+                        "`/p1-draw`: Player 1 rút bài\n" +
+                        "`/p2-draw`: Player 2 rút bài\n" +
                         "---------------------------\n" +
-                        "`\\p1-drawbottom`: Player 1 rút lá ở cuối bộ bài lên tay\n" +
-                        "`\\p2-drawbottom`: Player 2 rút lá ở cuối bộ bài lên tay\n" +
+                        "`/p1-drawbottom`: Player 1 rút lá ở cuối bộ bài lên tay\n" +
+                        "`/p2-drawbottom`: Player 2 rút lá ở cuối bộ bài lên tay\n" +
                         "---------------------------\n" +
-                        "`\\p1-insert number`: Player 1 nhét lá bài [number] vào bộ bài\n" +
-                        "`\\p2-insert number`: Player 2 nhét lá bài [number] vào bộ bài\n" +
+                        "`/p1-insert number`: Player 1 nhét lá bài [number] vào bộ bài\n" +
+                        "`/p2-insert number`: Player 2 nhét lá bài [number] vào bộ bài\n" +
                         "---------------------------\n" +
-                        "`\\p1-choose number`: Player 1 chọn lá bài [number] và đua lên tay\n" +
-                        "`\\p2-choose number`: Player 2 chọn lá bài [number] và đua lên tay\n",
+                        "`/p1-choose number`: Player 1 chọn lá bài [number] và đưa lên tay\n" +
+                        "`/p2-choose number`: Player 2 chọn lá bài [number] và đưa lên tay\n",
                 })
 
                 break;
