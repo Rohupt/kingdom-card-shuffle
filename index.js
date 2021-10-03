@@ -65,16 +65,16 @@ try {
     client.on('ready', () => {
         console.log("ready!!!")
 
-        const guideId = '884098897377636452'
+        const guideId = '886977856788393987'
         const guild = client.guilds.cache.get(guideId)
         let commands
 
-        // if (guild) {
-        //     commands = guild.commands
-        // } else {
-        //     commands = client.application?.commands
-        // }
-        commands = client.application?.commands
+        if (guild) {
+            commands = guild.commands
+        } else {
+            commands = client.application?.commands
+        }
+        // commands = client.application?.commands
 
         commands?.create({
             name: 'game-start',
