@@ -4,8 +4,8 @@ dotenv.config()
 
 import * as helper from "./helper/helper.js"
 
-var deck_size = helper.deck_size
-var channel1 = '887057961464238080'
+var deck_size = 20
+var channel1 = '894099940446470164'
 var channel2 = '892097703528505355'
 var channel3 = '891527609094135829'
 
@@ -65,15 +65,16 @@ try {
     client.on('ready', () => {
         console.log("ready!!!")
 
-        const guideId = '886977856788393987'
+        const guideId = '884098897377636452'
         const guild = client.guilds.cache.get(guideId)
         let commands
 
-        if (guild) {
-            commands = guild.commands
-        } else {
-            commands = client.application?.commands
-        }
+        // if (guild) {
+        //     commands = guild.commands
+        // } else {
+        //     commands = client.application?.commands
+        // }
+        commands = client.application?.commands
 
         commands?.create({
             name: 'game-start',
@@ -157,10 +158,23 @@ try {
             ]
         })
 
-        // commands?.create({
-        //     name: 'show-card',
-        //     description: 'Xem bài cả 2 bên'
-        // })
+        commands?.create({
+            name: 'show-deck',
+            description: 'Xem số lượng bài cả 2 bên'
+        })
+
+        commands?.create({
+            name: 'set-deck',
+            description: 'Điều chỉnh số lượng bài trong bộ bài',
+            options: [
+                {
+                    name: 'number',
+                    description: 'số lượng lá bài',
+                    required: true,
+                    type: DiscordJS.Constants.ApplicationCommandOptionTypes.NUMBER
+                },
+            ]
+        })
     })
 
 
@@ -185,8 +199,8 @@ try {
         switch (commandName) {
             case 'game-start':
 
-                atk = helper.random()
-                def = helper.random()
+                atk = helper.random(deck_size)
+                def = helper.random(deck_size)
                 console.log(atk)
 
                 draw_atk = atk.slice(atk.length - 5, atk.length)
@@ -216,6 +230,9 @@ try {
                         "`/game-manual`: xem hướng dẫn chơi\n" +
                         "`/game-start`: bắt đầu ván chơi mới\n" +
                         "---------------------------\n" +
+                        "`/show-deck`: xem số lượng lá bài còn lại\n" +
+                        "`/set-deck number`: điều chỉnh số lượng lá bài trong bộ bài thành number\n" +
+                        "---------------------------\n" +
                         "`/p1-draw`: Player 1 rút bài\n" +
                         "`/p2-draw`: Player 2 rút bài\n" +
                         "---------------------------\n" +
@@ -231,9 +248,37 @@ try {
 
                 break;
 
-            case 'show-card':
+            // case 'show-card':
+            //     interaction.reply({
+            //         content: `atk: [${atk.join('] [')}]\ndef: [${def.join('] [')}]`,
+            //     })
+
+            //     break;
+            case 'show-deck':
                 interaction.reply({
-                    content: `atk: [${atk.join('] [')}]\ndef: [${def.join('] [')}]`,
+                    content: `Player 1: ${atk.length}\nPlayer 2: ${def.length}`,
+                })
+
+                break;
+
+            case 'set-deck':
+                number = options.getNumber('number') || -1
+
+                if (number > 50 || number < 1) {
+                    interaction.reply({
+                        content: `Số lá bài không hợp lệ, nhập số là bài trong khoảng 1-50`,
+                        // ephemeral: true,
+                    })
+                    break;
+                }
+                deck_size = number
+                assign_arr(
+                    interaction.channel.id,
+                    Array.from(Array(deck_size + 1).keys()),
+                    Array.from(Array(deck_size + 1).keys())
+                )
+                interaction.reply({
+                    content: `Số lượng bài của bộ bài đã thay đổi thành ${number}\n`,
                 })
 
                 break;
