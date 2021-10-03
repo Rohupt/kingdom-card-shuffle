@@ -274,8 +274,8 @@ try {
                 deck_size = number
                 assign_arr(
                     interaction.channel.id,
-                    Array.from(Array(deck_size + 1).keys()),
-                    Array.from(Array(deck_size + 1).keys())
+                    Array.from(Array(deck_size).keys()),
+                    Array.from(Array(deck_size).keys())
                 )
                 interaction.reply({
                     content: `Số lượng bài của bộ bài đã thay đổi thành ${number}\n`,
