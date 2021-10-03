@@ -199,8 +199,8 @@ try {
         switch (commandName) {
             case 'game-start':
 
-                atk = helper.random(deck_size)
-                def = helper.random(deck_size)
+                atk = random(deck_size)
+                def = random(deck_size)
                 console.log(atk)
 
                 draw_atk = atk.slice(atk.length - 5, atk.length)
@@ -489,4 +489,18 @@ try {
     client.login(process.env.TOKEN)
 } catch (err) {
     console.log(err)
+}
+
+function random(size) {
+    let j, x, i;
+    let a = Array.from(Array(size + 1).keys())
+    a.shift()
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+
+    return a;
 }
