@@ -264,9 +264,9 @@ try {
             case 'set-deck':
                 number = options.getNumber('number') || -1
 
-                if (number > 50 || number < 1) {
+                if (number > 50 || number < 10) {
                     interaction.reply({
-                        content: `Số lá bài không hợp lệ, nhập số là bài trong khoảng 1-50`,
+                        content: `Số lá bài không hợp lệ, nhập số là bài trong khoảng 10-50`,
                         // ephemeral: true,
                     })
                     break;
