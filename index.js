@@ -286,7 +286,7 @@ try {
             case 'p1-draw':
                 if (atk.length == 0) {
                     interaction.reply({
-                        content: `Hết bài, Player 2 chiến thắng!`,
+                        content: `Player 1 đã hết bài!`,
                     })
                     break;
                 }
@@ -310,7 +310,7 @@ try {
             case 'p1-drawbottom':
                 if (atk.length == 0) {
                     interaction.reply({
-                        content: `Hết bài, Player 2 chiến thắng!`,
+                        content: `Player 1 đã hết bài!`,
                     })
                     break;
                 }
@@ -333,7 +333,7 @@ try {
             case 'p2-draw':
                 if (def.length == 0) {
                     interaction.reply({
-                        content: `Hết bài, Player 1 chiến thắng!`,
+                        content: `Player 2 đã hết bài!`,
                     })
                     break;
                 }
@@ -357,7 +357,7 @@ try {
             case 'p2-drawbottom':
                 if (def.length == 0) {
                     interaction.reply({
-                        content: `Hết bài, Player 1 chiến thắng!`,
+                        content: `Player 2 đã hết bài!`,
                     })
                     break;
                 }
