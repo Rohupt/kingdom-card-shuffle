@@ -19,41 +19,13 @@ var defend2 = helper.random()
 var attack3 = helper.random()
 var defend3 = helper.random()
 
-function get_arr(channelID) {
-    if (channelID === channel1) {
-        return {
-            atk: attack1,
-            def: defend1
-        }
-    }
-    if (channelID === channel2) {
-        return {
-            atk: attack2,
-            def: defend2
-        }
-    }
-    if (channelID === channel3) {
-        return {
-            atk: attack3,
-            def: defend3
-        }
-    }
-}
+var atk_usr1 = ''
+var def_usr1 = ''
+var atk_usr2 = ''
+var def_usr2 = ''
+var atk_usr3 = ''
+var def_usr3 = ''
 
-function assign_arr(channelID, atk, def) {
-    if (channelID === channel1) {
-        attack1 = atk
-        defend1 = def
-    }
-    if (channelID === channel2) {
-        attack2 = atk
-        defend2 = def
-    }
-    if (channelID === channel3) {
-        attack3 = atk
-        defend3 = def
-    }
-}
 try {
     const client = new DiscordJS.Client({
         intents: [
@@ -65,7 +37,7 @@ try {
     client.on('ready', () => {
         console.log("ready!!!")
 
-        const guideId = '886977856788393987'
+        const guideId = process.env.GUILD_ID
         const guild = client.guilds.cache.get(guideId)
         let commands
 
@@ -78,7 +50,21 @@ try {
 
         commands?.create({
             name: 'game-start',
-            description: 'Bắt đầu lượt chơi mới'
+            description: 'Bắt đầu lượt chơi mới',
+            options: [
+                {
+                    name: 'player1',
+                    description: 'Player 1',
+                    required: true,
+                    type: DiscordJS.Constants.ApplicationCommandOptionTypes.MENTIONABLE
+                },
+                {
+                    name: 'player2',
+                    description: 'Player 2',
+                    required: true,
+                    type: DiscordJS.Constants.ApplicationCommandOptionTypes.MENTIONABLE
+                }
+            ]
         })
 
         commands?.create({
@@ -196,12 +182,23 @@ try {
         let atk = arr.atk
         let def = arr.def
 
+        let usr = get_usr(interaction.channel.id)
+        let atk_usr = usr.atk_usr
+        let def_usr = usr.def_usr
+
         switch (commandName) {
             case 'game-start':
 
                 atk = random(deck_size)
                 def = random(deck_size)
-                console.log(atk)
+
+                atk_usr = options.getMentionable('player1').user.id
+                def_usr = options.getMentionable('player2').user.id
+                assign_usr(
+                    interaction.channel.id,
+                    atk_usr,
+                    def_usr
+                )
 
                 draw_atk = atk.slice(atk.length - 5, atk.length)
                 draw_def = def.slice(def.length - 5, def.length)
@@ -217,9 +214,9 @@ try {
                 // })
                 interaction.reply({
                     content: `Bốc bài!\n` +
-                        `P1--> [${draw_atk.join('] [')}]\n` +
+                        `<@${atk_usr}>(Player 1)--> [${draw_atk.join('] [')}]\n` +
                         `-------------------------------\n` +
-                        `P2--> [${draw_def.join('] [')}]`,
+                        `<@${def_usr}>(Player 2)--> [${draw_def.join('] [')}]`,
                 })
 
                 break;
@@ -228,7 +225,7 @@ try {
                 interaction.reply({
                     content: "Hướng dẫn sử dụng bot chia bài:\n" +
                         "`/game-manual`: xem hướng dẫn chơi\n" +
-                        "`/game-start`: bắt đầu ván chơi mới\n" +
+                        "`/game-start player1 player2`: bắt đầu ván chơi mới với hai người chơi player 1 và player 2\n\t(Lưu ý: chỉ player 1 và player 2 được quyền gọi các lệnh tương ứng)\n" +
                         "---------------------------\n" +
                         "`/show-deck`: xem số lượng lá bài còn lại\n" +
                         "`/set-deck number`: điều chỉnh số lượng lá bài trong bộ bài thành number\n" +
@@ -256,7 +253,7 @@ try {
             //     break;
             case 'show-deck':
                 interaction.reply({
-                    content: `Player 1: ${atk.length}\nPlayer 2: ${def.length}`,
+                    content: `<@${atk_usr}>(Player 1): ${atk.length}\n<@${def_usr}>(Player 2): ${def.length}`,
                 })
 
                 break;
@@ -284,9 +281,18 @@ try {
                 break;
 
             case 'p1-draw':
+                // console.log(atk_usr)
+                // console.log(interaction.member.id)
+                if (interaction.member.id !== atk_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 if (atk.length == 0) {
                     interaction.reply({
-                        content: `Player 1 đã hết bài!`,
+                        content: `<@${atk_usr}> đã hết bài!`,
                     })
                     break;
                 }
@@ -302,15 +308,22 @@ try {
                 //     `,
                 // })
                 interaction.reply({
-                    content: `Player 1 rút bài\n[${draw_atk}]`,
+                    content: `<@${atk_usr}> rút bài\n[${draw_atk}]`,
                 })
 
                 break;
 
             case 'p1-drawbottom':
+                if (interaction.member.id !== atk_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 if (atk.length == 0) {
                     interaction.reply({
-                        content: `Player 1 đã hết bài!`,
+                        content: `<@${atk_usr}> đã hết bài!`,
                     })
                     break;
                 }
@@ -325,15 +338,22 @@ try {
                 //         `,
                 // })
                 interaction.reply({
-                    content: `Player 1 rút bài ở cuối\n[${draw_atk}]`,
+                    content: `<@${atk_usr}> rút bài ở cuối\n[${draw_atk}]`,
                 })
 
                 break;
 
             case 'p2-draw':
+                if (interaction.member.id !== def_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 if (def.length == 0) {
                     interaction.reply({
-                        content: `Player 2 đã hết bài!`,
+                        content: `<@${def_usr}> đã hết bài!`,
                     })
                     break;
                 }
@@ -349,15 +369,22 @@ try {
                 //         `,
                 // })
                 interaction.reply({
-                    content: `Player 2 rút bài\n[${draw_def}]`,
+                    content: `<@${def_usr}> rút bài\n[${draw_def}]`,
                 })
 
                 break;
 
             case 'p2-drawbottom':
+                if (interaction.member.id !== def_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 if (def.length == 0) {
                     interaction.reply({
-                        content: `Player 2 đã hết bài!`,
+                        content: `<@${def_usr}> đã hết bài!`,
                     })
                     break;
                 }
@@ -372,12 +399,19 @@ try {
                 //             `,
                 // })
                 interaction.reply({
-                    content: `Player 2 rút bài ở cuối\n[${draw_def}]`,
+                    content: `<@${def_usr}> rút bài ở cuối\n[${draw_def}]`,
                 })
 
                 break;
 
             case 'p1-insert':
+                if (interaction.member.id !== atk_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 number = options.getNumber('number') || -1
 
                 if (number > deck_size || number < 0) {
@@ -406,12 +440,19 @@ try {
                 //     // ephemeral: true,
                 // })
                 interaction.reply({
-                    content: `Player 1 đưa lá bài [${number}] vào bộ bài`,
+                    content: `<@${atk_usr}> đưa lá bài [${number}] vào bộ bài`,
                     // ephemeral: true,
                 })
                 break;
 
             case 'p2-insert':
+                if (interaction.member.id !== def_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 number = options.getNumber('number') || -1
 
                 if (number > deck_size || number < 0) {
@@ -440,12 +481,19 @@ try {
                 //     // ephemeral: true,
                 // })
                 interaction.reply({
-                    content: `Player 2 đưa lá bài [${number}] vào bộ bài`,
+                    content: `<@${def_usr}> đưa lá bài [${number}] vào bộ bài`,
                     // ephemeral: true,
                 })
                 break;
 
             case 'p1-choose':
+                if (interaction.member.id !== atk_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 number = options.getNumber('number') || -1
 
                 if (atk.indexOf(number) == -1) {
@@ -458,12 +506,19 @@ try {
 
                 atk.splice(atk.indexOf(number), 1);
                 interaction.reply({
-                    content: `Player 1 lấy lá bài [${number}] lên tay`,
+                    content: `<@${atk_usr}> lấy lá bài [${number}] lên tay`,
                     // ephemeral: true,
                 })
                 break;
 
             case 'p2-choose':
+                if (interaction.member.id !== def_usr) {
+                    interaction.reply({
+                        content: `Bạn không có quyền thực hiện hành động này`,
+                    })
+                    break;
+                }
+
                 number = options.getNumber('number') || -1
 
                 if (def.indexOf(number) == -1) {
@@ -476,7 +531,7 @@ try {
 
                 def.splice(def.indexOf(number), 1);
                 interaction.reply({
-                    content: `Player 2 lấy lá bài [${number}] lên tay`,
+                    content: `<@${def_usr}> lấy lá bài [${number}] lên tay`,
                     // ephemeral: true,
                 })
                 break;
@@ -503,4 +558,76 @@ function random(size) {
     }
 
     return a;
+}
+
+function get_arr(channelID) {
+    if (channelID === channel1) {
+        return {
+            atk: attack1,
+            def: defend1
+        }
+    }
+    if (channelID === channel2) {
+        return {
+            atk: attack2,
+            def: defend2
+        }
+    }
+    if (channelID === channel3) {
+        return {
+            atk: attack3,
+            def: defend3
+        }
+    }
+}
+
+function assign_arr(channelID, atk, def) {
+    if (channelID === channel1) {
+        attack1 = atk
+        defend1 = def
+    }
+    if (channelID === channel2) {
+        attack2 = atk
+        defend2 = def
+    }
+    if (channelID === channel3) {
+        attack3 = atk
+        defend3 = def
+    }
+}
+
+function get_usr(channelID) {
+    if (channelID === channel1) {
+        return {
+            atk_usr: atk_usr1,
+            def_usr: def_usr1
+        }
+    }
+    if (channelID === channel2) {
+        return {
+            atk_usr: atk_usr2,
+            def_usr: def_usr2
+        }
+    }
+    if (channelID === channel3) {
+        return {
+            atk_usr: atk_usr3,
+            def_usr: def_usr3
+        }
+    }
+}
+
+function assign_usr(channelID, atk, def) {
+    if (channelID === channel1) {
+        atk_usr1 = atk
+        def_usr1 = def
+    }
+    if (channelID === channel2) {
+        atk_usr2 = atk
+        def_usr2 = def
+    }
+    if (channelID === channel3) {
+        atk_usr3 = atk
+        def_usr3 = def
+    }
 }
