@@ -6,8 +6,8 @@ import * as helper from "./helper/helper.js"
 
 var deck_size = 20
 var channel1 = '894099940446470164'
-var channel2 = '892097703528505355'
-var channel3 = '891527609094135829'
+var channel2 = '920873985804234802'
+var channel3 = '920874020705034241'
 
 var number
 var draw_atk, draw_def
